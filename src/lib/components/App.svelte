@@ -3,6 +3,7 @@
   import Scene from './Scene.svelte'
 </script>
 
-<Canvas>
+
+<Canvas rendererParameters={{ antialias: true }}>
   <Scene />
 </Canvas>

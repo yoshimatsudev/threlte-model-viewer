@@ -1,60 +1,43 @@
-<script lang="ts">
-  import { T, useFrame } from '@threlte/core'
+<script>
+	import { T, useFrame } from '@threlte/core';
+	import { useGltf, OrbitControls, interactivity, Grid, useGltfAnimations } from '@threlte/extras';
+	import { spring } from 'svelte/motion';
+	import Chair from '$lib/components/Chair.svelte';
+	import {
+		AxesHelper,
+		GridHelper,
+		OrthographicCamera,
+		PerspectiveCamera,
+		AnimationLoader
+	} from 'three';
+	import Corkboard from './Corkboard.svelte';
+	import LargeIsland from './Large_island.svelte';
+	import Character from './Character.svelte';
+	import { buttonIdle, buttonWalk, buttonRun } from '../character_state';
+	import { Pane } from 'tweakpane';
 
-  let rotation = 0
-  useFrame(() => {
-    rotation += 0.001
-  })
+	const pane = new Pane();
+
+	const btn = pane.addButton({
+		title: 'Run animation',
+	});
+
+	btn.on('click', () => {
+		$buttonWalk = !$buttonWalk
+	});
+
+	let camera = { position: [0, 1, 0], zoom: 40 };
 </script>
 
-<T.Group rotation.y={rotation}>
-  <T.PerspectiveCamera
-    makeDefault
-    position={[-10, 10, 10]}
-    fov={15}
-    on:create={({ ref }) => {
-      ref.lookAt(0, 1, 0)
-    }}
-  />
-</T.Group>
+<T.OrthographicCamera makeDefault position={[1, 2, 0]} zoom={40}>
+	<OrbitControls />
+</T.OrthographicCamera>
 
-<!-- Floor -->
-<T.Mesh rotation.x={(90 * Math.PI) / 180}>
-  <T.CircleGeometry args={[3, 16]} />
-  <T.MeshBasicMaterial
-    color="#666666"
-    wireframe
-  />
-</T.Mesh>
+<T.AmbientLight color="white" />
 
-<T.DirectionalLight
-  intensity={0.8}
-  position.x={5}
-  position.y={10}
-/>
-<T.AmbientLight intensity={0.2} />
+<!-- <Chair/> -->
+<!-- <Corkboard scale={3}/> -->
+<Character scale={1} position={[0, 1, 0]} />
+<LargeIsland scale={1} position={[0, -0.39, 0]} />
 
-<T.Mesh
-  position.y={1.2}
-  position.z={-0.75}
->
-  <T.BoxGeometry />
-  <T.MeshStandardMaterial color="#0059BA" />
-</T.Mesh>
-
-<T.Mesh
-  position={[1.2, 1.5, 0.75]}
-  rotation.x={5}
-  rotation.y={71}
->
-  <T.TorusKnotGeometry args={[0.5, 0.15, 100, 12, 2, 3]} />
-  <T.MeshStandardMaterial color="#F85122" />
-</T.Mesh>
-
-<T.Mesh
-  position={[-1.4, 1.5, 0.75]}
-  rotation={[-5, 128, 10]}
->
-  <T.IcosahedronGeometry />
-  <T.MeshStandardMaterial color="#F8EBCE" />
-</T.Mesh>
+<button style={'position: fixed'} on:click={() => $buttonIdle} />
